@@ -1,0 +1,41 @@
+// GLSL: vertex shader
+#version 150
+uniform mat4 worldMatrix;
+uniform mat4 viewMatrix;
+uniform vec4 U;
+uniform vec4 W;
+uniform vec4 V;
+uniform float mode;
+in vec3 position;
+in vec2 tex;
+out vec2 text;
+uniform mat4 projMatrix;
+uniform float hither;
+uniform float YonSubHither;
+out float TrueZ;
+out vec3 vPW;
+in vec3 normal;
+out vec3 v_normal;
+void main(){
+    if (mode == 0.0){
+        vec4 p = vec4( position, 1.0 );
+        p = p * worldMatrix;
+        vPW = p.xyz;
+        p = p * viewMatrix;
+        TrueZ = (-p.z-hither)/YonSubHither;
+        p = p * projMatrix;
+        gl_Position = p;
+	}
+	else {
+	    vec2 t = (tex - vec2(.5)) * 2;
+	    vec4 p = vec4(0,0,0,1) * worldMatrix;
+	    p = p + (t.s * U) + (t.t * V);
+	    p = p * viewMatrix;
+	    TrueZ = (-p.z-hither)/YonSubHither;
+	    p = p * projMatrix;
+        gl_Position = p;
+	}
+	text = tex;
+	vec4 n = vec4(normal,0.0);
+	v_normal = (n*worldMatrix).xyz;
+}

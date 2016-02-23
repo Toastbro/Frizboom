@@ -1,0 +1,26 @@
+precision highp float;
+
+varying vec3 v_normal;
+varying vec3 v_worldPos;
+varying vec2 v_texcoord;
+
+uniform vec4 lightPos;
+uniform sampler2D diffuse_texture;
+
+void main(){
+
+    //flip the t texture coordinate because it's easier than fixing the 
+    //model's coordinates to be correct... :-)
+    vec4 c = texture2D(diffuse_texture,vec2( v_texcoord.s, v_texcoord.t) );
+    
+    vec3 N=normalize(v_normal.xyz);
+    
+    vec3 L = lightPos.xyz-v_worldPos.xyz;
+    L=normalize(L);
+    
+    float dp = clamp( dot(L,N) , 0.0, 1.0);
+    
+    gl_FragColor.rgb = dp * c.rgb;
+    gl_FragColor.a = c.a;
+
+}

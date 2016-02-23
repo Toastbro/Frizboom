@@ -1,0 +1,37 @@
+//GLSL: Fragment shader
+#version 150
+uniform vec3 ColorRef;
+uniform sampler2D textur;
+varying vec2 text;
+uniform float mode;
+uniform float alpha;
+
+uniform vec3 lightPos;
+uniform vec3 lightColor;
+out vec4 color;
+in float TrueZ;
+in vec3 vPW;
+in vec3 v_normal;
+
+
+void main(){
+    //if (mode == 0.0) {
+    //    float d = distance(text, vec2(.5,.5));
+    //    vec3 q = mix(ColorRef.rgb,vec3(0),d);
+    //    vec4 colorstate = vec4( q.rgb, alpha);
+    //    color = colorstate;
+    //}
+    //else {
+        //gl_FragDepth = TrueZ;
+        vec3 L = vPW - lightPos;
+        L = normalize(L);
+        vec3 N = normalize(v_normal);
+        float dp = dot(N,L);
+
+        dp = clamp(dp,0.0,1.0);
+        vec4 texc = texture2D(textur, text);
+        vec3 col = (texc.rgb * .25) + texc.rgb * dp * lightColor;
+        color = vec4(col.rgb, alpha*texc.a);
+
+    //}
+    }
